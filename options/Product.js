@@ -23,8 +23,8 @@ app.component("product", {
         <section class="description">
 
             <h4>{{ product.name.toUpperCase() }} {{ product.stock == 0 ? "😭" : "😎" }}</h4>
-            <span class="badge new" v-if="product.new">Nuevo</span>
-            <span class="badge offer" v-if="product.offer">Oferta</span>
+
+            <badge :product="product"></badge>
 
             <p class="description__status" v-if="product.stock == 3">Quedan pocas unidades</p>
             <p class="description__status" v-else-if="product.stock == 2">El producto está por terminarse</p>
@@ -39,13 +39,15 @@ app.component("product", {
                 @keyup.enter="applyDiscount($event)">
             </div>
 
-            <button :disabled="product.stock == 0" @click="addToCart">Agregar al carrito</button>
+            <button :disabled="product.stock == 0" @click="sendToCart">Agregar al carrito</button>
 
         </section>
 
     `,
 
     props: ["product"],
+
+    emits: ["sendtocart"],
 
     data() {
         return {
@@ -67,19 +69,13 @@ app.component("product", {
 
         },
 
-        addToCart() {
-
-            const prodIndex = this.cart.findIndex(prod => prod.name == this.product.name);
-
-            if (prodIndex >= 0)
-                this.cart[prodIndex].quantity += 1;
-            else 
-                this.cart.push(this.product);
-            
-            this.product.stock -= 1;
-
+        sendToCart() {
+    
+            this.$emit("sendtocart", this.product);
+    
         }
+        
+    },
 
-    }
 
 });
